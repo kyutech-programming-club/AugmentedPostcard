@@ -23,6 +23,9 @@ class _RecordWidgetState extends State<RecordWidget> {
   FlutterAudioRecorder recorder;
 
   Future<bool> initializeRecorder () async {
+    if (initialized) {
+      return Future.value(true);
+    }
     bool hasPermission = await FlutterAudioRecorder.hasPermissions;
     print(hasPermission);
     if (hasPermission) {
@@ -56,55 +59,70 @@ class _RecordWidgetState extends State<RecordWidget> {
 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    '',
-                  ),
-                  GestureDetector(
-                    onLongPress: () {
-                      if (!is_ok) {
-                        //録音開始
-                        setState(() {
-                          is_on = true;
-                        });
-                        recorder.start();
-                      }
+                  RaisedButton(
+                    child: Text('Start'),
+                    onPressed: () async {
+                      await recorder.start();
                     },
-                    onLongPressUp: () async {
-                      if (!is_ok) {
-                        //録音終了
-                        var recordData = await recorder.stop();
-                        print(recordData.runtimeType);
-                        print(await makeBase64(recordData.path));
-                        setState(() {
-                          // initialized = false;
-                          _recordData = recordData;
-                        });
-                        setState(() {
-                          is_ok = true;
-                          is_on = false;
-                        });
-                      }
-                    },
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: is_on && !is_ok ? Colors.pink[200] : null,
-                        borderRadius: const BorderRadius.only(
-                          topRight: const Radius.circular(75),
-                          bottomRight: const Radius.circular(75),
-                          topLeft: const Radius.circular(75),
-                          bottomLeft: const Radius.circular(75),
-                        ),
-                      ),
-                      //color: Colors.red,
-                      child: Icon(
-                        Icons.keyboard_voice,
-                        color: Colors.blue,
-                        size: 100,
-                      ),
-                    ),
                   ),
+                  RaisedButton(
+                    child: Text('Stop'),
+                    onPressed: () async {
+                      await recorder.stop();
+                      setState(() {
+                        initialized = true;
+                        is_ok = true;
+                      });
+                    },
+                  ),
+                  // Text(
+                  //   '',
+                  // ),
+                  // GestureDetector(
+                  //   onLongPress: () async {
+                  //     if (!is_ok) {
+                  //       await recorder.start();
+                  //       //録音開始
+                  //       setState(() {
+                  //         is_on = true;
+                  //       });
+                  //     }
+                  //   },
+                  //   onLongPressUp: () async {
+                  //     if (!is_ok) {
+                  //       //録音終了
+                  //       var recordData = await recorder.stop();
+                  //       print(recordData.runtimeType);
+                  //       print(await makeBase64(recordData.path));
+                  //       setState(() {
+                  //         initialized = false;
+                  //       });
+                  //       setState(() {
+                  //         is_ok = true;
+                  //         is_on = false;
+                  //       });
+                  //     }
+                  //   },
+                  //   child: Container(
+                  //     width: 150,
+                  //     height: 150,
+                  //     decoration: BoxDecoration(
+                  //       color: is_on && !is_ok ? Colors.pink[200] : null,
+                  //       borderRadius: const BorderRadius.only(
+                  //         topRight: const Radius.circular(75),
+                  //         bottomRight: const Radius.circular(75),
+                  //         topLeft: const Radius.circular(75),
+                  //         bottomLeft: const Radius.circular(75),
+                  //       ),
+                  //     ),
+                  //     //color: Colors.red,
+                  //     child: Icon(
+                  //       Icons.keyboard_voice,
+                  //       color: Colors.blue,
+                  //       size: 100,
+                  //     ),
+                  //   ),
+                  // ),
                   Row(children: <Widget>[
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("再生"),
@@ -118,12 +136,11 @@ class _RecordWidgetState extends State<RecordWidget> {
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("取り消し"),
                       onPressed: () {
+                        // cancelRecord(_recordData.path);
                         //取り消し
-                        removeRecord(_recordData.path);
                         setState(() {
+                          _recordData = new Recording();
                           is_ok = false;
-                          initialized = false;
-                          // _recordData = null;
                         });
                       },
                       highlightElevation: 16.0,
@@ -133,9 +150,11 @@ class _RecordWidgetState extends State<RecordWidget> {
                   ]),
                   (is_ok) ? RaisedButton(
                     child: Text("登録"),
-                    onPressed: () {
+                    onPressed: () async {
                       //音声をデータベースに入れて、メモリから消す
-                      removeRecord(_recordData.path);
+                      var recordData = await recorder.stop();
+                      print(recordData.runtimeType);
+                      print(await makeBase64(recordData.path));
                     },
                     highlightElevation: 16.0,
                     highlightColor: Colors.blue,
@@ -167,7 +186,7 @@ Future<String> makeBase64(String path) async {
   }
 }
 
-void removeRecord(String path) async {
+void cancelRecord(String path) async {
   try {
     final file = File(path);
     file.delete();
