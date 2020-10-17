@@ -18,7 +18,7 @@ class _RootWidgetState extends State<RootWidget> {
 
   static const _footerIcons = [
     Icons.tag_faces,
-    Icons.qr_code_scanner_sharp,
+    Icons.ac_unit,
   ];
 
   static const _footerItemNames = [

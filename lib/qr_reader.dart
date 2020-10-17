@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'media_play.dart';
-
-import 'main.dart';
+import 'featureCamera.dart';
 
 class QRscan extends StatefulWidget {
   QRscan({Key key, this.title}) : super(key: key);
@@ -51,7 +50,7 @@ class _QRscanState extends State<QRscan> {
                 context,
                 new MaterialPageRoute<Null>(
                 settings: const RouteSettings(name: "media_play"),
-            builder: (BuildContext context) => MediaPlay(media: scanResult.rawContent?.toString()),
+            builder: (BuildContext context) => CameraWidget(),//MediaPlay(media: scanResult.rawContent?.toString()),
             ),);
           },
         ),
