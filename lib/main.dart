@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'record.dart';
 import 'footer.dart';
+import 'qr_reader.dart';
+import 'media_play.dart';
 
 void main() => runApp(App());
 
@@ -10,6 +12,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       routes: {
         'record_root': (context) => RecordWidget(),
+        //'mediaplay': (context) => MediaPlay(media),
       },
       title: 'AugmentedPostcard',
       debugShowCheckedModeBanner: false,
