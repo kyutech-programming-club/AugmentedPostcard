@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class RootWidget extends StatefulWidget {
-  RootWidget({Key key, this.title}) : super(key: key);
+class IndexWidget extends StatefulWidget {
+  IndexWidget({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _RootWidgetState createState() => _RootWidgetState();
+  _IndexWidgetState createState() => _IndexWidgetState();
 }
 
-class _RootWidgetState extends State<RootWidget> {
+class _IndexWidgetState extends State<IndexWidget> {
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +26,7 @@ class _RootWidgetState extends State<RootWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '',
-            ),
-            RaisedButton(
-              child: Text("つくる"),
-              onPressed: () {
-                Navigator.pushNamed(context, 'record_root');
-              },
-              highlightElevation: 16.0,
-              highlightColor: Colors.blue,
-              onHighlightChanged: (value) {},
-            ),
-            RaisedButton(
-              child: Text("よみこむ"),
-              onPressed: () {},
-              highlightElevation: 16.0,
-              highlightColor: Colors.blue,
-              onHighlightChanged: (value) {},
+              '説明',
             ),
           ],
         ),

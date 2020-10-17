@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'index.dart';
 import 'record.dart';
+import 'footer.dart';
 
 void main() => runApp(App());
 
