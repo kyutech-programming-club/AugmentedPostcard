@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 class IndexWidget extends StatefulWidget {
-  IndexWidget({Key key, this.title}) : super(key: key);
+  IndexWidget({Key key}) : super(key: key);
 
-  final String title;
 
   @override
   _IndexWidgetState createState() => _IndexWidgetState();
@@ -17,7 +16,7 @@ class _IndexWidgetState extends State<IndexWidget> {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text("widget.title"),
+        title: Text('AugmentedPostcard'),
       ),
       body: Center(
 

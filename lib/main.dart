@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'index.dart';
 import 'record.dart';
 import 'footer.dart';
 import 'qr_reader.dart';
@@ -15,7 +14,7 @@ class App extends StatelessWidget {
         'record_root': (context) => RecordWidget(),
         //'mediaplay': (context) => MediaPlay(media),
       },
-      title: 'Flutter Demo',
+      title: 'AugmentedPostcard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.blueGrey[900],

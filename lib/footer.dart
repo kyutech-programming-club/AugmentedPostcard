@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'index.dart';
+import 'featureCamera.dart';
 import 'qr_reader.dart';
 
 class RootWidget extends StatefulWidget {
-  RootWidget({Key key}) : super(key: key);
+  RootWidget({Key key, this.title}) : super(key: key);
+  final String title;
 
   @override
   _RootWidgetState createState() => _RootWidgetState();
