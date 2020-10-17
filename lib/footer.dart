@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'index.dart';
+import 'qr_reader.dart';
 
 class RootWidget extends StatefulWidget {
   RootWidget({Key key}) : super(key: key);
@@ -15,16 +16,17 @@ class _RootWidgetState extends State<RootWidget> {
 
   static const _footerIcons = [
     Icons.tag_faces,
-    Icons.show_chart,
+    Icons.qr_code_scanner_sharp,
   ];
 
   static const _footerItemNames = [
     'index',
-    'read',
+    'Scan',
   ];
 
   var _routes = [
     IndexWidget(),
+    QRscan(),
   ];
 
   @override
