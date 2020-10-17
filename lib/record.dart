@@ -4,6 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'dart:io';
+import 'dart:convert';
+
 class RecordWidget extends StatefulWidget {
   RecordWidget({Key key}) : super(key: key);
 
@@ -14,6 +17,7 @@ class RecordWidget extends StatefulWidget {
 class _RecordWidgetState extends State<RecordWidget> {
   bool is_ok = false;
   bool is_on = false;
+  Recording _recordData;
 
   bool initialized = false;
   FlutterAudioRecorder recorder;
@@ -58,17 +62,23 @@ class _RecordWidgetState extends State<RecordWidget> {
                   GestureDetector(
                     onLongPress: () {
                       if (!is_ok) {
-                        print("ahi");
                         //録音開始
                         setState(() {
                           is_on = true;
                         });
+                        recorder.start();
                       }
                     },
-                    onLongPressUp: () {
+                    onLongPressUp: () async {
                       if (!is_ok) {
-                        print("ahiahi");
                         //録音終了
+                        var recordData = await recorder.stop();
+                        print(recordData.runtimeType);
+                        print(await makeBase64(recordData.path));
+                        setState(() {
+                          // initialized = false;
+                          _recordData = recordData;
+                        });
                         setState(() {
                           is_ok = true;
                           is_on = false;
@@ -109,8 +119,11 @@ class _RecordWidgetState extends State<RecordWidget> {
                       child: Text("取り消し"),
                       onPressed: () {
                         //取り消し
+                        removeRecord(_recordData.path);
                         setState(() {
                           is_ok = false;
+                          initialized = false;
+                          // _recordData = null;
                         });
                       },
                       highlightElevation: 16.0,
@@ -122,6 +135,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                     child: Text("登録"),
                     onPressed: () {
                       //音声をデータベースに入れて、メモリから消す
+                      removeRecord(_recordData.path);
                     },
                     highlightElevation: 16.0,
                     highlightColor: Colors.blue,
@@ -135,5 +149,29 @@ class _RecordWidgetState extends State<RecordWidget> {
         },
       ),
     );
+  }
+}
+
+Future<String> makeBase64(String path) async {
+  try {
+    final file = File(path);
+    file.openRead();
+
+    List<int> fileBytes = await file.readAsBytes();
+    String base64String = base64.encode(fileBytes);
+
+    return base64String;
+  } catch (e) {
+    print(e.toString());
+    return null;
+  }
+}
+
+void removeRecord(String path) async {
+  try {
+    final file = File(path);
+    file.delete();
+  } catch (e) {
+    print(e.toString());
   }
 }
