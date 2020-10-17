@@ -85,9 +85,12 @@ class _RecordWidgetState extends State<RecordWidget> {
                     ) : Container(),),
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("取り消し"),
-                      onPressed: () {
-                        //取り消し
+                      onPressed: () async {
+                        //取り消しq
+                        var recordData = await recorder.stop();
+                        await File(recordData.path).delete();
                         setState(() {
+                          initialized = false;
                           is_ok = false;
                         });
                       },
