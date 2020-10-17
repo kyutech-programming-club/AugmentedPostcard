@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
+
 class RecordWidget extends StatefulWidget {
   RecordWidget({Key key}) : super(key: key);
 
@@ -76,8 +78,11 @@ class _RecordWidgetState extends State<RecordWidget> {
                   Row(children: <Widget>[
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("再生"),
-                      onPressed: () {
+                      onPressed: () async {
                         //再生
+                        var recordData = await recorder.stop();
+                        AudioPlayer audioPlayer = AudioPlayer();
+                        await audioPlayer.play(recordData.path, isLocal: true);
                       },
                       highlightElevation: 16.0,
                       highlightColor: Colors.blue,
