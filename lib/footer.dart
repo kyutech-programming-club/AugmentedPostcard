@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'index.dart';
+import 'featureCamera.dart';
 
 class RootWidget extends StatefulWidget {
-  RootWidget({Key key}) : super(key: key);
+  RootWidget({Key key, this.title}) : super(key: key);
+  final String title;
 
   @override
   _RootWidgetState createState() => _RootWidgetState();
@@ -25,6 +27,7 @@ class _RootWidgetState extends State<RootWidget> {
 
   var _routes = [
     IndexWidget(),
+    CameraWidget(),
   ];
 
   @override

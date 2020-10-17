@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'index.dart';
 import 'record.dart';
 import 'footer.dart';
 
@@ -12,7 +11,7 @@ class App extends StatelessWidget {
       routes: {
         'record_root': (context) => RecordWidget(),
       },
-      title: 'Flutter Demo',
+      title: 'AugmentedPostcard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.blueGrey[900],

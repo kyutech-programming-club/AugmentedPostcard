@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 class RecordWidget extends StatefulWidget {
-  RecordWidget({Key key, this.title}) : super(key: key);
-
-  final String title;
+  RecordWidget({Key key}) : super(key: key);
 
   @override
   _RecordWidgetState createState() => _RecordWidgetState();
 }
 
 class _RecordWidgetState extends State<RecordWidget> {
+  bool is_ok = false;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class _RecordWidgetState extends State<RecordWidget> {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text("widget.title"),
+        title: Text("AugmentedPostcard"),
       ),
       body: Center(
 
@@ -28,39 +27,39 @@ class _RecordWidgetState extends State<RecordWidget> {
             Text(
               '',
             ),
-        RaisedButton(
-          child: Text("録音"),
-          color: Colors.white,
-          shape: CircleBorder(
-            side: BorderSide(
-              color: Colors.black,
-              width: 1.0,
-              style: BorderStyle.solid,
+            IconButton(
+              color: Colors.blue,
+              iconSize: 100,
+              icon: Icon(Icons.keyboard_voice_outlined),
+              onPressed: () {
+                setState(() {
+                  is_ok = true;
+                });
+              },
             ),
-          ),
-          onPressed: () {},
-        ),
-            RaisedButton(
-              child: Text("再生"),
+            Row(children: <Widget>[
+              Expanded(child: (is_ok) ? RaisedButton(
+                child: Text("再生"),
+                onPressed: () {},
+                highlightElevation: 16.0,
+                highlightColor: Colors.blue,
+                onHighlightChanged: (value) {},
+              ) : Container(),),
+              Expanded(child: (is_ok) ? RaisedButton(
+                child: Text("取り消し"),
+                onPressed: () {},
+                highlightElevation: 16.0,
+                highlightColor: Colors.blue,
+                onHighlightChanged: (value) {},
+              ) : Container(),),
+            ]),
+            (is_ok) ? RaisedButton(
+              child: Text("登録"),
               onPressed: () {},
               highlightElevation: 16.0,
               highlightColor: Colors.blue,
               onHighlightChanged: (value) {},
-            ),
-            RaisedButton(
-              child: Text("取り消し"),
-              onPressed: () {},
-              highlightElevation: 16.0,
-              highlightColor: Colors.blue,
-              onHighlightChanged: (value) {},
-            ),
-            RaisedButton(
-              child: Text("次へ"),
-              onPressed: () {},
-              highlightElevation: 16.0,
-              highlightColor: Colors.blue,
-              onHighlightChanged: (value) {},
-            ),
+            ) : Text('音声を入力してください'),
           ],
         ),
       ),
