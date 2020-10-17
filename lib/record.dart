@@ -16,8 +16,6 @@ class RecordWidget extends StatefulWidget {
 
 class _RecordWidgetState extends State<RecordWidget> {
   bool is_ok = false;
-  bool is_on = false;
-  Recording _recordData;
 
   bool initialized = false;
   FlutterAudioRecorder recorder;
@@ -75,54 +73,6 @@ class _RecordWidgetState extends State<RecordWidget> {
                       });
                     },
                   ),
-                  // Text(
-                  //   '',
-                  // ),
-                  // GestureDetector(
-                  //   onLongPress: () async {
-                  //     if (!is_ok) {
-                  //       await recorder.start();
-                  //       //録音開始
-                  //       setState(() {
-                  //         is_on = true;
-                  //       });
-                  //     }
-                  //   },
-                  //   onLongPressUp: () async {
-                  //     if (!is_ok) {
-                  //       //録音終了
-                  //       var recordData = await recorder.stop();
-                  //       print(recordData.runtimeType);
-                  //       print(await makeBase64(recordData.path));
-                  //       setState(() {
-                  //         initialized = false;
-                  //       });
-                  //       setState(() {
-                  //         is_ok = true;
-                  //         is_on = false;
-                  //       });
-                  //     }
-                  //   },
-                  //   child: Container(
-                  //     width: 150,
-                  //     height: 150,
-                  //     decoration: BoxDecoration(
-                  //       color: is_on && !is_ok ? Colors.pink[200] : null,
-                  //       borderRadius: const BorderRadius.only(
-                  //         topRight: const Radius.circular(75),
-                  //         bottomRight: const Radius.circular(75),
-                  //         topLeft: const Radius.circular(75),
-                  //         bottomLeft: const Radius.circular(75),
-                  //       ),
-                  //     ),
-                  //     //color: Colors.red,
-                  //     child: Icon(
-                  //       Icons.keyboard_voice,
-                  //       color: Colors.blue,
-                  //       size: 100,
-                  //     ),
-                  //   ),
-                  // ),
                   Row(children: <Widget>[
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("再生"),
@@ -136,10 +86,8 @@ class _RecordWidgetState extends State<RecordWidget> {
                     Expanded(child: (is_ok) ? RaisedButton(
                       child: Text("取り消し"),
                       onPressed: () {
-                        // cancelRecord(_recordData.path);
                         //取り消し
                         setState(() {
-                          _recordData = new Recording();
                           is_ok = false;
                         });
                       },
@@ -155,6 +103,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                       var recordData = await recorder.stop();
                       print(recordData.runtimeType);
                       print(await makeBase64(recordData.path));
+                      await File(recordData.path).delete();
                     },
                     highlightElevation: 16.0,
                     highlightColor: Colors.blue,
@@ -183,14 +132,5 @@ Future<String> makeBase64(String path) async {
   } catch (e) {
     print(e.toString());
     return null;
-  }
-}
-
-void cancelRecord(String path) async {
-  try {
-    final file = File(path);
-    file.delete();
-  } catch (e) {
-    print(e.toString());
   }
 }
