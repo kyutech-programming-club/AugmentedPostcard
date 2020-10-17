@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+import 'media_play.dart';
+
+import 'main.dart';
 
 class QRscan extends StatefulWidget {
   QRscan({Key key, this.title}) : super(key: key);
@@ -41,29 +44,19 @@ class _QRscanState extends State<QRscan> {
   Widget build(BuildContext context) {
     var contentList = <Widget>[
       if (scanResult != null)
-        Card(
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                title: Text("Result Type"),
-                subtitle: Text(scanResult.type?.toString() ?? ""),
-              ),
-              ListTile(
-                title: Text("RawContent"),
-                subtitle: Text(scanResult.rawContent ?? ""),
-              ),
-              ListTile(
-                title: Text("Format"),
-                subtitle: Text(scanResult.format?.toString() ?? ""),
-              ),
-              ListTile(
-                title: Text("Format note"),
-                subtitle: Text(scanResult.formatNote ?? ""),
-              ),
-            ],
-          ),
+        FlatButton(
+          child: Text("音声を再生しますか"),
+          onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute<Null>(
+                settings: const RouteSettings(name: "media_play"),
+            builder: (BuildContext context) => MediaPlay(media: scanResult.rawContent?.toString()),
+            ),);
+          },
         ),
-      ListTile(
+      if (scanResult == null)
+        ListTile(
           title: Text("ボタンを押してカメラを起動してください"),
           subtitle: Text("カメラをQRコードに向けてください")),
     ];
