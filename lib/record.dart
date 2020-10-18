@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'dart:io';
+import 'dart:convert';
+
+import 'package:audioplayers/audioplayers.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class RecordWidget extends StatefulWidget {
   RecordWidget({Key key}) : super(key: key);
 
@@ -10,7 +20,25 @@ class RecordWidget extends StatefulWidget {
 
 class _RecordWidgetState extends State<RecordWidget> {
   bool is_ok = false;
-  bool is_on = false;
+
+  bool initialized = false;
+  FlutterAudioRecorder recorder;
+
+  Future<bool> initializeRecorder () async {
+    if (initialized) {
+      return Future.value(true);
+    }
+    bool hasPermission = await FlutterAudioRecorder.hasPermissions;
+    print(hasPermission);
+    if (hasPermission) {
+      final dir = await getApplicationDocumentsDirectory();
+      recorder = FlutterAudioRecorder("${dir.path}/voice.aac", audioFormat: AudioFormat.AAC);
+      await recorder.initialized;
+      print("success");
+      return Future.value(true);
+    }
+    return Future.value(false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,90 +48,106 @@ class _RecordWidgetState extends State<RecordWidget> {
 
         title: Text("AugmentedPostcard"),
       ),
-      body: Center(
+      body: FutureBuilder(
+        future: initializeRecorder(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            Container(color:Colors.blue);
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Center(
 
-        child: Column(
+              child: Column(
 
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '',
-            ),
-            GestureDetector(
-              onLongPress: () {
-                if (!is_ok) {
-                  print("ahi");
-                  //録音開始
-                  setState(() {
-                    is_on = true;
-                  });
-                }
-              },
-              onLongPressUp: () {
-                if (!is_ok) {
-                  print("ahiahi");
-                  //録音終了
-                  setState(() {
-                    is_ok = true;
-                    is_on = false;
-                  });
-                }
-              },
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: is_on && !is_ok ? Colors.pink[200] : null,
-                  borderRadius: const BorderRadius.only(
-                    topRight: const Radius.circular(75),
-                    bottomRight: const Radius.circular(75),
-                    topLeft: const Radius.circular(75),
-                    bottomLeft: const Radius.circular(75),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('Start'),
+                    onPressed: () async {
+                      await recorder.start();
+                    },
                   ),
-                ),
-                //color: Colors.red,
-                child: Icon(
-                  Icons.keyboard_voice,
-                  color: Colors.blue,
-                  size: 100,
-                ),
+                  RaisedButton(
+                    child: Text('Stop'),
+                    onPressed: () async {
+                      await recorder.stop();
+                      setState(() {
+                        initialized = true;
+                        is_ok = true;
+                      });
+                    },
+                  ),
+                  Row(children: <Widget>[
+                    Expanded(child: (is_ok) ? RaisedButton(
+                      child: Text("再生"),
+                      onPressed: () async {
+                        //再生
+                        var recordData = await recorder.stop();
+                        AudioPlayer audioPlayer = AudioPlayer();
+                        await audioPlayer.play(recordData.path, isLocal: true);
+                      },
+                      highlightElevation: 16.0,
+                      highlightColor: Colors.blue,
+                      onHighlightChanged: (value) {},
+                    ) : Container(),),
+                    Expanded(child: (is_ok) ? RaisedButton(
+                      child: Text("取り消し"),
+                      onPressed: () async {
+                        //取り消しq
+                        var recordData = await recorder.stop();
+                        await File(recordData.path).delete();
+                        setState(() {
+                          initialized = false;
+                          is_ok = false;
+                        });
+                      },
+                      highlightElevation: 16.0,
+                      highlightColor: Colors.blue,
+                      onHighlightChanged: (value) {},
+                    ) : Container(),),
+                  ]),
+                  (is_ok) ? RaisedButton(
+                    child: Text("登録"),
+                    onPressed: () async {
+                      //音声をデータベースに入れて、メモリから消す
+                      var recordData = await recorder.stop();
+                      print(recordData.runtimeType);
+
+                      CollectionReference apRec = FirebaseFirestore.instance.collection('apRec');
+                      await apRec.add({
+                        'voice': await makeBase64(recordData.path),
+                      })
+                          .then((value) => print("apRec Added"))
+                          .catchError((error) => print("Failed to add apRec: $error"));
+
+                      await File(recordData.path).delete();
+                    },
+                    highlightElevation: 16.0,
+                    highlightColor: Colors.blue,
+                    onHighlightChanged: (value) {},
+                  ) : Text('音声を入力してください'),
+                ],
               ),
-            ),
-            Row(children: <Widget>[
-              Expanded(child: (is_ok) ? RaisedButton(
-                child: Text("再生"),
-                onPressed: () {
-                  //再生
-                },
-                highlightElevation: 16.0,
-                highlightColor: Colors.blue,
-                onHighlightChanged: (value) {},
-              ) : Container(),),
-              Expanded(child: (is_ok) ? RaisedButton(
-                child: Text("取り消し"),
-                onPressed: () {
-                  //取り消し
-                  setState(() {
-                    is_ok = false;
-                  });
-                },
-                highlightElevation: 16.0,
-                highlightColor: Colors.blue,
-                onHighlightChanged: (value) {},
-              ) : Container(),),
-            ]),
-            (is_ok) ? RaisedButton(
-              child: Text("登録"),
-              onPressed: () {
-                //音声をデータベースに入れて、メモリから消す
-              },
-              highlightElevation: 16.0,
-              highlightColor: Colors.blue,
-              onHighlightChanged: (value) {},
-            ) : Text('音声を入力してください'),
-          ],
-        ),
+            );
+          }
+          return Container(color: Colors.red,);
+        },
       ),
     );
+  }
+}
+
+Future<String> makeBase64(String path) async {
+  try {
+    final file = File(path);
+    file.openRead();
+
+    List<int> fileBytes = await file.readAsBytes();
+    String base64String = base64.encode(fileBytes);
+
+    return base64String;
+  } catch (e) {
+    print(e.toString());
+    return null;
   }
 }
