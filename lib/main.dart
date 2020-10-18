@@ -31,7 +31,6 @@ class App extends StatelessWidget {
             title: 'AugmentedPostcard',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              primaryColor: Colors.blueGrey[900],
             ),
             home: RootWidget(),
           );
