@@ -34,11 +34,12 @@ class _QRscanState extends State<QRscan> {
         scanResult = result;
         id = result.rawContent.toString();
       });
-      DocumentSnapshot qrData = await FirebaseFirestore.instance.collection('apData').doc(result.rawContent.toString()).get();
-      if (qrData.exists) {
+      DocumentSnapshot qrData = await FirebaseFirestore.instance.collection('apRec').doc(result.rawContent.toString()).get();
+      if (qrData != null) {
         setState(() {
-          base64 = qrData.data()['voice'];
-          effectType = qrData.data()['effectType'];
+          print(qrData.data()['voice']);
+          base64 = qrData['voice'];
+          // effectType = qrData.data()['effectType'];
           hasInfo = true;
         });
       }
