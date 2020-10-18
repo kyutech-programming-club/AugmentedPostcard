@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CameraWidget extends StatefulWidget {
-  CameraWidget({Key key}) : super(key: key);
+  CameraWidget({Key key, this.id, this.base64, this.effectType}) : super(key: key);
+
+  final String id;
+  final String base64;
+  final String effectType;
 
   @override
   _CameraWidgetState createState() => _CameraWidgetState();
