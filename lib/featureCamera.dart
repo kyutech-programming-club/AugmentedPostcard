@@ -24,49 +24,31 @@ class _CameraWidgetState extends State<CameraWidget> {
     } on CameraException catch (e) {
       print(e);
     }
-    CameraController controller;
-    controller = new CameraController(cameras[0], ResolutionPreset.ultraHigh);
-    await controller.initialize();
+    cameraController = CameraController(cameras[0], ResolutionPreset.medium);
+    await cameraController.initialize();
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
 
-          title: Text("AugmentedPostcard"),
-        ),
-        body: CameraPreview(cameraController)
+        title: Text("AugmentedPostcard"),
+      ),
+      body: FutureBuilder(
+        future: loadData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Container(color: Colors.red,);
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CameraPreview(cameraController);
+          }
+          return Container(color: Colors.white,);
+        },
+      ),
     );
-    // Center(
-    //
-    //   child: Column(
-    //
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: <Widget>[
-    //       Text(
-    //         '',
-    //       ),
-    //       RaisedButton(
-    //         child: Text("情報なし"),
-    //         onPressed: () {
-    //           Navigator.pushNamed(context, 'record_root');
-    //         },
-    //         highlightElevation: 16.0,
-    //         highlightColor: Colors.blue,
-    //         onHighlightChanged: (value) {},
-    //       ),
-    //       RaisedButton(
-    //         child: Text("情報あり"),
-    //         onPressed: () {},
-    //         highlightElevation: 16.0,
-    //         highlightColor: Colors.blue,
-    //         onHighlightChanged: (value) {},
-    //       ),
-    //     ],
-    //   ),
-    // ),
-    // );
   }
 }
