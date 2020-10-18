@@ -90,7 +90,7 @@ class _QRscanState extends State<QRscan> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('QRscan'),
+          title: Text('AugmentedPostcard'),
         ),
         body: Container(
           child: contentList,
