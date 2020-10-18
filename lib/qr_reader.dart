@@ -30,17 +30,20 @@ class _QRscanState extends State<QRscan> {
   Future _scan() async {
     try {
       var result = await BarcodeScanner.scan();
-      setState(() {
-        scanResult = result;
-        id = result.rawContent.toString();
-      });
       DocumentSnapshot qrData = await FirebaseFirestore.instance.collection('apRec').doc(result.rawContent.toString()).get();
       if (qrData != null) {
         setState(() {
           print(qrData.data()['voice']);
+          scanResult = result;
+          id = result.rawContent.toString();
           base64 = qrData['voice'];
           // effectType = qrData.data()['effectType'];
           hasInfo = true;
+        });
+      } else {
+        setState(() {
+          scanResult = result;
+          id = result.rawContent.toString();
         });
       }
     } on PlatformException catch (e) {
