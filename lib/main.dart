@@ -25,7 +25,7 @@ class App extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
             routes: {
-              'record_root': (context) => RecordWidget(),
+              // 'record_root': (context) => RecordWidget(),
               //'mediaplay': (context) => MediaPlay(media),
             },
             title: 'AugmentedPostcard',

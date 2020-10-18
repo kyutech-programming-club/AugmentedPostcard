@@ -12,7 +12,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RecordWidget extends StatefulWidget {
-  RecordWidget({Key key}) : super(key: key);
+  RecordWidget({Key key, this.id}) : super(key: key);
+
+  final id;
 
   @override
   _RecordWidgetState createState() => _RecordWidgetState();
@@ -113,8 +115,8 @@ class _RecordWidgetState extends State<RecordWidget> {
                       var recordData = await recorder.stop();
                       print(recordData.runtimeType);
 
-                      CollectionReference apRec = FirebaseFirestore.instance.collection('apRec');
-                      await apRec.add({
+                      DocumentReference apRec = FirebaseFirestore.instance.collection('apRec').doc(widget.id);
+                      await apRec.set({
                         'voice': await makeBase64(recordData.path),
                       })
                           .then((value) => print("apRec Added"))
