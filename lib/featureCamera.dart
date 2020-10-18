@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+import 'dart:convert';
+
 
 class CameraWidget extends StatefulWidget {
   CameraWidget({Key key, this.id, this.base64, this.effectType}) : super(key: key);
@@ -20,6 +25,11 @@ class _CameraWidgetState extends State<CameraWidget> {
     WidgetsFlutterBinding.ensureInitialized();
     List<CameraDescription> cameras;
     try {
+      AudioPlayer audioPlayer = AudioPlayer();
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/audio.mp3');
+      await file.writeAsBytes(base64Decode(widget.base64));
+      await audioPlayer.play(file.path, isLocal: true);
       cameras = await availableCameras();
     } on CameraException catch (e) {
       print(e);
