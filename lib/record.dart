@@ -112,7 +112,14 @@ class _RecordWidgetState extends State<RecordWidget> {
                       //音声をデータベースに入れて、メモリから消す
                       var recordData = await recorder.stop();
                       print(recordData.runtimeType);
-                      print(await makeBase64(recordData.path));
+
+                      CollectionReference apRec = FirebaseFirestore.instance.collection('apRec');
+                      await apRec.add({
+                        'voice': await makeBase64(recordData.path),
+                      })
+                          .then((value) => print("apRec Added"))
+                          .catchError((error) => print("Failed to add apRec: $error"));
+
                       await File(recordData.path).delete();
                     },
                     highlightElevation: 16.0,
