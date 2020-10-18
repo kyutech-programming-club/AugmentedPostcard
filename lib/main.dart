@@ -3,6 +3,7 @@ import 'record.dart';
 import 'footer.dart';
 import 'qr_reader.dart';
 import 'media_play.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 
